@@ -1,0 +1,22 @@
+{
+  "name": "webtasks",
+  "version": "1.0.0",
+  "description": "Note taking, with weighted time",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wertylop5/WebTasks.git"
+  },
+  "author": "Stanley Lin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wertylop5/WebTasks/issues"
+  },
+  "homepage": "https://github.com/wertylop5/WebTasks#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
