@@ -1,25 +1,16 @@
 "use strict";
-
 const express = require("express");
 
 let app = express();
+
+const PORT = 3000;
+const HOST = "localhost";
+
 app.use(express.static("static/html"));
-/*
-app.use((res, req, next) => {
-	console.log("middle");
-	//next();
-});
-*/
+app.use(express.static("static/js"));
 
-app.get("/", (req, res) => {
-	console.log("uhh");
-	//res.send("Hello");
-	
-	//won't work
-	//res.render("static/html/index.html");
-});
-
-app.listen(3000, () => {
-	console.log("Hi");
+app.listen(PORT, HOST, () => {
+	console.log("express");
+	console.log(`app listening on ${HOST}:${PORT}`);
 });
 
