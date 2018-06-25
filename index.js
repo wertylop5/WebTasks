@@ -7,7 +7,7 @@ const PORT = 3000;
 const HOST = "localhost";
 
 app.use(express.static("static/html"));
-app.use(express.static("static/js"));
+app.use(express.static("build/static/js"));
 
 app.listen(PORT, HOST, () => {
 	console.log("express");
