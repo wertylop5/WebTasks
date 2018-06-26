@@ -2,10 +2,11 @@
   "name": "webtasks",
   "version": "1.0.0",
   "description": "Note taking, with weighted time",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "app": "node index.js"
+    "build": "babel -d build/ static/js/index.js",
+    "app": "node app.js"
   },
   "repository": {
     "type": "git",
