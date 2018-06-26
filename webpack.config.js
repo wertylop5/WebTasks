@@ -15,7 +15,7 @@ module.exports = {
 	"context": path.resolve(__dirname, "static/js/"),
 	
 	//file we want to build
-	"entry": "./index.js",
+	"entry": "./index.react.js",
 	"output": {
 		"filename": "[id].bundle.js",
 		"path": path.resolve(__dirname, "build/static/js")
@@ -25,8 +25,10 @@ module.exports = {
 			//We want to convert JSX code first
 			{
 				//a shortcut is just to use "test": regex
+				//and "exclude": string
 				"resource": {
-					"test": /\.js$/
+					"test": /\.react\.js$/,
+					"exclude": path.resolve(__dirname, "node_modules")
 				},
 				"use": [
 					//a UseEntry
