@@ -1,19 +1,21 @@
 {
   "name": "webtasks",
+  "author": "Stanley Lin",
   "version": "1.0.0",
   "description": "Note taking, with weighted time",
+  "license": "ISC",
+  "private": true,
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel -d build/ static/js/index.js",
+    "build_b": "babel -d build/ static/js/index.js",
+    "build": "webpack --config webpack.config.js",
     "app": "node app.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wertylop5/WebTasks.git"
   },
-  "author": "Stanley Lin",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/wertylop5/WebTasks/issues"
   },
@@ -26,7 +28,10 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1"
+    "babel-preset-react": "^6.24.1",
+    "webpack": "^4.12.1",
+    "webpack-cli": "^3.0.8"
   }
 }
