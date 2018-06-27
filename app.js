@@ -1,4 +1,8 @@
 "use strict";
+
+//shoutout to this post:
+//https://stackoverflow.com/questions/42294827/webpack-vs-webpack-dev-server-vs-webpack-dev-middleware-vs-webpack-hot-middlewar
+
 const express = require("express");
 
 const webpackMiddleware = require("webpack-dev-middleware");
