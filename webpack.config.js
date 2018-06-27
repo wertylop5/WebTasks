@@ -7,6 +7,7 @@
  * */
 
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
 	"mode": "development",
@@ -15,10 +16,17 @@ module.exports = {
 	"context": path.resolve(__dirname, "static/js/"),
 	
 	//file we want to build
-	"entry": "./index.react.js",
+	"entry": [
+		"./index.react.js",
+		"react-hot-loader/patch",
+		"webpack-hot-middleware/client"
+	],
 	"output": {
 		"filename": "[id].bundle.js",
-		"path": path.resolve(__dirname, "build/static/js")
+		"path": path.resolve(__dirname, "build/static/js"),
+
+		//required for hot reload
+		"publicPath": "http://localhost:3000/static/js"
 	},
 	"module": {
 		"rules": [
@@ -42,6 +50,10 @@ module.exports = {
 				]
 			}
 		]
-	}
+	},
+	"plugins": [
+		new webpack.HotModuleReplacementPlugin(),
+		new webpack.NoEmitOnErrorsPlugin()
+	]
 };
 
