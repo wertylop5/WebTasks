@@ -13,7 +13,7 @@ module.exports = {
 	"mode": "development",
 	
 	//where to look for input files
-	"context": path.resolve(__dirname, "static/js/"),
+	"context": path.resolve(__dirname, "react/"),
 	
 	//file we want to build
 	"entry": [
