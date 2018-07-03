@@ -20,7 +20,10 @@
   },
   "homepage": "https://github.com/wertylop5/WebTasks#readme",
   "dependencies": {
+    "bootstrap": "^4.1.1",
     "express": "^4.16.3",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-hot-loader": "^4.3.3"

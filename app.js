@@ -15,6 +15,7 @@ const PORT = 3000;
 const HOST = "localhost";
 
 app.use(express.static("static/html"));
+app.use(express.static("static/css"));
 app.use(express.static("build"));
 
 //webpack-dev-middleware runs webpack in watch mode,
