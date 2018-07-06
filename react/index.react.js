@@ -6,6 +6,16 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const { hot } = require("react-hot-loader");
 
+const weightCalc = require("../util/weightCalc");
+
+/*
+ * A task should be formatted as:
+ * {
+ * 	desc: <string>,
+ * 	type: <string>
+ * }
+*/
+
 class TaskApp extends React.Component {
 	//TaskForm will pass new tasks here
 	//TaskList will acquire the tasks via props
@@ -21,22 +31,32 @@ class TaskApp extends React.Component {
 		return <div>
 			<TaskForm />
 			<TaskList tasks={this.state.tasks}/>
-			</div>;
+		</div>;
 	}
 
 	acquireTasks() {
-		return [
+		let taskList = [
 			{
 				key: 0,
 				desc: "Study chem",
-				time: "3 hr"
+				type: "study"
 			},
 			{
 				key: 1,
 				desc: "sleep",
-				time: "8 hr"
+				type: "sleep"
 			}
-		]
+		];
+		return taskList;
+	}
+
+	calcTime(tasks, totTime) {
+		let weights = [];
+		for (let t of tasks) {
+			weights.push(weightCalc.getWeight(t));
+		}
+
+		let factor = totTime / weights.reduce((tot, curVal) => tot+curVal);
 	}
 }
 
@@ -116,7 +136,7 @@ class TaskList extends React.Component {
 		<h1>Tasks</h1>
 		<ul>
 			{this.props.tasks.map(elem => {
-				return <Task key={elem.key}
+				return <Task key={elem.key} type={elem.type}
 					desc={elem.desc} time={elem.time} />;
 			})}
 		</ul>
