@@ -50,6 +50,7 @@ class TaskApp extends React.Component {
 		return taskList;
 	}
 
+	//modifies tasks to add a time property
 	calcTime(tasks, totTime) {
 		let weights = [];
 		for (let t of tasks) {
@@ -57,6 +58,9 @@ class TaskApp extends React.Component {
 		}
 
 		let factor = totTime / weights.reduce((tot, curVal) => tot+curVal);
+		for (let x = 0; x < tasks.length(); x++) {
+			tasks[x]["time"] = weights[x]*factor;
+		}
 	}
 }
 
