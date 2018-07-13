@@ -23,13 +23,16 @@ class TaskApp extends React.Component {
 		super(props);
 
 		this.state = {
-			tasks: this.acquireTasks()
+			tasks: this.acquireTasks(),
+			curTaskKey: 0
 		}
+		this.acquireTasks = this.acquireTasks.bind(this);
+		this.addTask = this.addTask.bind(this);
 	}
 	
 	render() {
 		return <div>
-			<TaskForm />
+			<TaskForm addTask={this.addTask}/>
 			<TaskList tasks={this.state.tasks}/>
 		</div>;
 	}
@@ -43,10 +46,17 @@ class TaskApp extends React.Component {
 			},
 			{
 				key: 1,
+				desc: "Study calc",
+				type: "study"
+			},
+			{
+				key: 2,
 				desc: "sleep",
 				type: "sleep"
 			}
 		];
+		this.setState({curTaskKey: 3});
+		this.calcTime(taskList, 10);
 		return taskList;
 	}
 
@@ -58,9 +68,20 @@ class TaskApp extends React.Component {
 		}
 
 		let factor = totTime / weights.reduce((tot, curVal) => tot+curVal);
-		for (let x = 0; x < tasks.length(); x++) {
+		for (let x = 0; x < tasks.length; x++) {
 			tasks[x]["time"] = weights[x]*factor;
 		}
+	}
+
+	addTask(desc, type) {
+		this.setState((prevState, props) => {
+			return {tasks: [
+				//access all the elements in the array
+				...prevState.tasks,
+				
+				{key: 3, desc: "yum", type: "break", time: 1}
+			]};
+		});
 	}
 }
 
@@ -70,7 +91,10 @@ class TypeButton extends React.Component {
 	}
 
 	render() {
-		return <p>{this.props.type}</p>
+		return <button
+			type="button"
+			className="btn btn-primary"
+			onClick={this.props.addTask}>{this.props.type}</button>
 	}
 }
 
@@ -81,7 +105,7 @@ class TypeButtonRow extends React.Component {
 	
 	render() {
 		return <div>
-			<TypeButton type="Test"/>
+			<TypeButton type="Test" addTask={this.props.addTask}/>
 		</div>;
 	}
 }
@@ -108,7 +132,7 @@ class TaskForm extends React.Component {
 	render() {
 		return <div>
 			<DescriptionEntry />
-			<TypeButtonRow />
+			<TypeButtonRow addTask={this.props.addTask}/>
 		</div>;
 	}
 }
@@ -122,9 +146,7 @@ class Task extends React.Component {
 		return <li>
 		<div>
 			<p>{this.props.desc}</p>
-			<br />
 			<p>{this.props.time}</p>
-			<br />
 		</div>
 		</li>;
 	}
