@@ -22,17 +22,21 @@ class TaskApp extends React.Component {
 	constructor(props) {
 		super(props);
 
+		let tasks = this.acquireTasks();
 		this.state = {
-			tasks: this.acquireTasks(),
-			curTaskKey: 0
-		}
+			tasks,
+			curTaskKey: tasks.length,
+			curDesc: ""	//current string in DescriptionEntry
+		};
+		
 		this.acquireTasks = this.acquireTasks.bind(this);
 		this.addTask = this.addTask.bind(this);
+		this.updateDesc = this.updateDesc.bind(this);
 	}
 	
 	render() {
 		return <div>
-			<TaskForm addTask={this.addTask}/>
+			<TaskForm addTask={this.addTask} updateDesc={this.updateDesc}/>
 			<TaskList tasks={this.state.tasks}/>
 		</div>;
 	}
@@ -55,7 +59,7 @@ class TaskApp extends React.Component {
 				type: "sleep"
 			}
 		];
-		this.setState({curTaskKey: 3});
+		//this.setState({curTaskKey: 3});
 		this.calcTime(taskList, 10);
 		return taskList;
 	}
@@ -73,28 +77,48 @@ class TaskApp extends React.Component {
 		}
 	}
 
-	addTask(desc, type) {
+	addTask(type) {
 		this.setState((prevState, props) => {
-			return {tasks: [
+			let curKey = prevState.curTaskKey;
+			let newTasks = [
 				//access all the elements in the array
 				...prevState.tasks,
-				
-				{key: 3, desc: "yum", type: "break", time: 1}
-			]};
+				{
+					key: curKey,
+					desc: prevState.curDesc,
+					type
+				}
+			];
+			this.calcTime(newTasks, 10);
+			
+			return {
+				tasks: newTasks,
+				curTaskKey: curKey+1
+			};
 		});
+	}
+
+	updateDesc(desc) {
+		this.setState({curDesc: desc});
 	}
 }
 
 class TypeButton extends React.Component {
 	constructor(props) {
 		super(props);
+		
+		this.createTask = this.createTask.bind(this);
+	}
+
+	createTask(e) {
+		this.props.addTask(this.props.type);
 	}
 
 	render() {
 		return <button
 			type="button"
 			className="btn btn-primary"
-			onClick={this.props.addTask}>{this.props.type}</button>
+			onClick={this.createTask}>{this.props.type}</button>
 	}
 }
 
@@ -105,7 +129,7 @@ class TypeButtonRow extends React.Component {
 	
 	render() {
 		return <div>
-			<TypeButton type="Test" addTask={this.props.addTask}/>
+			<TypeButton type="sleep" addTask={this.props.addTask}/>
 		</div>;
 	}
 }
@@ -117,10 +141,15 @@ class DescriptionEntry extends React.Component {
 		this.state = {
 			text: ""
 		};
+		this.changeDesc = this.changeDesc.bind(this);
+	}
+
+	changeDesc(e) {
+		this.props.updateDesc(e.target.value);
 	}
 	
 	render() {
-		return <textarea></textarea>;
+		return <textarea onChange={this.changeDesc}></textarea>;
 	}
 }
 
@@ -131,7 +160,7 @@ class TaskForm extends React.Component {
 	
 	render() {
 		return <div>
-			<DescriptionEntry />
+			<DescriptionEntry updateDesc={this.props.updateDesc}/>
 			<TypeButtonRow addTask={this.props.addTask}/>
 		</div>;
 	}
