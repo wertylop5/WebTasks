@@ -36,7 +36,10 @@ class TaskApp extends React.Component {
 	
 	render() {
 		return <div>
-			<TaskForm addTask={this.addTask} updateDesc={this.updateDesc}/>
+			<TaskForm addTask={this.addTask}
+				updateDesc={this.updateDesc}
+				descValue={this.state.curDesc}
+			/>
 			<TaskList tasks={this.state.tasks}/>
 		</div>;
 	}
@@ -91,9 +94,12 @@ class TaskApp extends React.Component {
 			];
 			this.calcTime(newTasks, 10);
 			
+			//don't call update function (ex: setState)
+			//inside another update function
 			return {
 				tasks: newTasks,
-				curTaskKey: curKey+1
+				curTaskKey: curKey+1,
+				curDesc: ""
 			};
 		});
 	}
@@ -138,9 +144,6 @@ class DescriptionEntry extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.state = {
-			text: ""
-		};
 		this.changeDesc = this.changeDesc.bind(this);
 	}
 
@@ -149,7 +152,14 @@ class DescriptionEntry extends React.Component {
 	}
 	
 	render() {
-		return <textarea onChange={this.changeDesc}></textarea>;
+		return <div>
+			<label>Task Description
+				<input id="taskDesc" type="text"
+					onChange={this.changeDesc}
+					value={this.props.descValue}
+				/>
+			</label>
+		</div>;
 	}
 }
 
@@ -160,7 +170,7 @@ class TaskForm extends React.Component {
 	
 	render() {
 		return <div>
-			<DescriptionEntry updateDesc={this.props.updateDesc}/>
+			<DescriptionEntry descValue={this.props.descValue} updateDesc={this.props.updateDesc}/>
 			<TypeButtonRow addTask={this.props.addTask}/>
 		</div>;
 	}
