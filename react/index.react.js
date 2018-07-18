@@ -21,27 +21,40 @@ class TaskApp extends React.Component {
 	//TaskList will acquire the tasks via props
 	constructor(props) {
 		super(props);
-
-		let tasks = this.acquireTasks();
+		
 		this.state = {
-			tasks,
-			curTaskKey: tasks.length,
-			curDesc: ""	//current string in DescriptionEntry
+			tasks: [],
+			curTaskKey: -1,
+			curDesc: "",	//current string in DescriptionEntry
+			totTime: 10
 		};
 		
 		this.acquireTasks = this.acquireTasks.bind(this);
 		this.addTask = this.addTask.bind(this);
 		this.updateDesc = this.updateDesc.bind(this);
+		this.updateTime = this.updateTime.bind(this);
 	}
 	
 	render() {
 		return <div>
 			<TaskForm addTask={this.addTask}
 				updateDesc={this.updateDesc}
+				updateTime={this.updateTime}
 				descValue={this.state.curDesc}
+				timeValue={this.state.totTime}
 			/>
 			<TaskList tasks={this.state.tasks}/>
 		</div>;
+	}
+
+	//called after render()
+	//make network requests here
+	componentDidMount() {
+		let tasks = this.acquireTasks();
+		this.setState({
+			tasks,
+			curTaskKey: tasks.length
+		});
 	}
 
 	acquireTasks() {
@@ -92,7 +105,7 @@ class TaskApp extends React.Component {
 					type
 				}
 			];
-			this.calcTime(newTasks, 10);
+			this.calcTime(newTasks, this.state.totTime);
 			
 			//don't call update function (ex: setState)
 			//inside another update function
@@ -106,6 +119,17 @@ class TaskApp extends React.Component {
 
 	updateDesc(desc) {
 		this.setState({curDesc: desc});
+	}
+
+	updateTime(time) {
+		this.setState((prevState, props) => {
+			this.calcTime(prevState.tasks, time);
+			
+			return {
+				tasks: prevState.tasks,
+				totTime: time
+			};
+		});
 	}
 }
 
@@ -136,7 +160,30 @@ class TypeButtonRow extends React.Component {
 	render() {
 		return <div>
 			<TypeButton type="sleep" addTask={this.props.addTask}/>
+			<TypeButton type="study" addTask={this.props.addTask}/>
+			<TypeButton type="break" addTask={this.props.addTask}/>
 		</div>;
+	}
+}
+
+class TimeEntry extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.changeTime = this.changeTime.bind(this);
+	}
+
+	changeTime(e) {
+		this.props.updateTime(e.target.value);
+	}
+	
+	render() {
+		return <label>Total time
+			<input type="number"
+				onChange={this.changeTime}
+				value={this.props.timeValue}
+			/>
+		</label>
 	}
 }
 
@@ -171,6 +218,7 @@ class TaskForm extends React.Component {
 	render() {
 		return <div>
 			<DescriptionEntry descValue={this.props.descValue} updateDesc={this.props.updateDesc}/>
+			<TimeEntry timeValue={this.props.timeValue} updateTime={this.props.updateTime}/>
 			<TypeButtonRow addTask={this.props.addTask}/>
 		</div>;
 	}
