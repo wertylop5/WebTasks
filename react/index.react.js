@@ -7,6 +7,7 @@ const ReactDOM = require("react-dom");
 const { hot } = require("react-hot-loader");
 
 const weightCalc = require("../util/weightCalc");
+const db = require("../util/db");
 
 /*
  * A task should be formatted as:
@@ -55,6 +56,7 @@ class TaskApp extends React.Component {
 			tasks,
 			curTaskKey: tasks.length
 		});
+		db.init();
 	}
 
 	acquireTasks() {
@@ -95,6 +97,11 @@ class TaskApp extends React.Component {
 
 	addTask(type) {
 		this.setState((prevState, props) => {
+			//if no task description was entered
+			if (prevState.curDesc === "") {
+				return null;
+			}
+			
 			let curKey = prevState.curTaskKey;
 			let newTasks = [
 				//access all the elements in the array
