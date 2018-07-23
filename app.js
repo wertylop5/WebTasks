@@ -41,6 +41,5 @@ app.get("/key", (req, res) => {
 
 app.listen(PORT, HOST, () => {
 	console.log(`app listening on ${HOST}:${PORT}`);
-	let dbRef = db.init();
 });
 

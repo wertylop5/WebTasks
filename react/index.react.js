@@ -6,7 +6,7 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const { hot } = require("react-hot-loader");
 
-const weightCalc = require("../util/weightCalc");
+const weightCalc = require("./util/weightCalc");
 const dbStatic = require("./util/dbStatic");
 
 //only used on startup, do not use
@@ -28,7 +28,7 @@ class TaskApp extends React.Component {
 		
 		this.state = {
 			tasks: [],
-			curTaskKey: -1,
+			curTaskKey: 0,
 			curDesc: "",	//current string in DescriptionEntry
 			totTime: 10
 		};
@@ -54,39 +54,36 @@ class TaskApp extends React.Component {
 	//called after render()
 	//make network requests here
 	componentDidMount() {
-		let tasks = this.acquireTasks();
-		this.setState({
-			tasks,
-			curTaskKey: tasks.length
-		});
-		
 		dbStatic.init().then(dbRef => {
+			//convenient place to put it?
 			this.dbRef = dbRef;
-			console.log(`db added ${this.dbRef}`);
+			
+			this.acquireTasks()
+				.then(tasks => {
+					console.log(
+						`initial curTaskKey: ${tasks.length}`);
+					this.setState({
+						tasks,
+						curTaskKey: tasks.length
+					});
+				});
 		});
 	}
 
+	//requests all tasks in the db
 	acquireTasks() {
-		let taskList = [
-			{
-				key: 0,
-				desc: "Study chem",
-				type: "study"
-			},
-			{
-				key: 1,
-				desc: "Study calc",
-				type: "study"
-			},
-			{
-				key: 2,
-				desc: "sleep",
-				type: "sleep"
-			}
-		];
-		//this.setState({curTaskKey: 3});
-		this.calcTime(taskList, 10);
-		return taskList;
+		return dbStatic.getTasks(this.dbRef)
+			.then(tasks => {
+				console.log("tasks received");
+				console.log(`length ${tasks.length}`);
+				tasks.forEach(task => {
+					console.log(task);
+				});
+				
+				this.calcTime(tasks,
+					this.state.totTime);
+				return tasks;
+			});
 	}
 
 	//modifies tasks to add a time property
@@ -102,6 +99,8 @@ class TaskApp extends React.Component {
 		}
 	}
 
+	//adds the task to our local list and uploads it to
+	//the db
 	addTask(type) {
 		this.setState((prevState, props) => {
 			//if no task description was entered
@@ -110,17 +109,21 @@ class TaskApp extends React.Component {
 			}
 			
 			let curKey = prevState.curTaskKey;
-			let newTasks = [
-				//access all the elements in the array
-				...prevState.tasks,
-				{
+
+			let newTask = {
 					key: curKey,
 					desc: prevState.curDesc,
 					type
-				}
+				};
+
+			dbStatic.addTask(this.dbRef, newTask);
+			
+			let newTasks = [
+				//access all the elements in the array
+				...prevState.tasks,
+				newTask
 			];
 			this.calcTime(newTasks, this.state.totTime);
-			dbStatic.test(this.dbRef);
 			
 			//don't call update function (ex: setState)
 			//inside another update function
@@ -271,13 +274,6 @@ class TaskList extends React.Component {
 		</div>;
 	}
 }
-
-	/*
-dbStatic.init().then(dbRef => {
-	db = dbRef;
-	console.log(`db added ${db}`);
-});
-*/
 
 ReactDOM.render(<TaskApp />, document.getElementById("root"));
 

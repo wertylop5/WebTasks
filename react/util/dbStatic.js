@@ -7,13 +7,21 @@ const 	$ = require("jquery"),
 		firebase = require("firebase/app"),
 		firestore = require("firebase/firestore");
 
-//returns a reference to the firebase db
+let db = null;
+
+//returns a Promise that will contain the
+//reference to the db
 function init(cb) {
+	if (db !== null) {
+		return Promise.resolve(db);
+	};
+	
 	return $.ajax("/key", {
 		contentType: "text/plain",
 		dataType: "text"
 	})
 	.then(data => {
+		console.log("creating new db ref");
 		firebase.initializeApp({
 			apiKey: data,
 			authDomain: "webtasks-78c6d.firebaseapp.com",
@@ -22,12 +30,12 @@ function init(cb) {
 			storageBucket: "webtasks-78c6d.appspot.com",
 			messagingSenderId: "946774295302"
 		});
-		let db = firebase.firestore();
-		db.settings({
+		let dbRef = firebase.firestore();
+		dbRef.settings({
 			timestampsInSnapshots: true
 		});
 		
-		return db;
+		return db = dbRef;
 	});
 }
 
@@ -43,8 +51,36 @@ function test(db) {
 	});
 }
 
+function getTasks(db) {
+	let taskCol = db.collection("tasks");
+	
+	return taskCol.get().then(snapshot => {
+		let tasks = [];
+		snapshot.forEach(doc => {
+			console.log(`${doc.id}: ${doc.data()}`);
+			tasks.push(doc.data());
+		});
+		return tasks;
+	}).catch(err => {
+		console.log(`err getting docs ${err}`);
+	});
+}
+
+function addTask(db, task) {
+	console.log(`got task ${JSON.stringify(task)}`);
+	db.collection("tasks").add(task)
+		.then(docRef => {
+			console.log(`added task ${docRef}`);
+		})
+		.catch(err => {
+			console.log(`err adding task ${err}`);
+		});
+}
+
 module.exports = {
 	init,
-	test
+	test,
+	getTasks,
+	addTask
 };
 
