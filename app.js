@@ -3,11 +3,15 @@
 //shoutout to this post:
 //https://stackoverflow.com/questions/42294827/webpack-vs-webpack-dev-server-vs-webpack-dev-middleware-vs-webpack-hot-middlewar
 
+const fs = require("fs");
+
 const express = require("express");
 
 const webpackMiddleware = require("webpack-dev-middleware");
 const webpackConfig = require("./webpack.config.js");
 const compiler = require("webpack")(webpackConfig);
+
+const db = require("./util/db");
 
 let app = express();
 
@@ -28,7 +32,15 @@ app.use(webpackMiddleware(compiler, {
 //hot reloading (no page reload needed)
 app.use(require("webpack-hot-middleware")(compiler));
 
+app.get("/key", (req, res) => {
+	db.getKey(key => {
+		res.type("text/plain");
+		res.end(key);
+	});
+});
+
 app.listen(PORT, HOST, () => {
 	console.log(`app listening on ${HOST}:${PORT}`);
+	let dbRef = db.init();
 });
 

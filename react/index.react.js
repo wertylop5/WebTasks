@@ -7,7 +7,10 @@ const ReactDOM = require("react-dom");
 const { hot } = require("react-hot-loader");
 
 const weightCalc = require("../util/weightCalc");
-const db = require("../util/db");
+const dbStatic = require("./util/dbStatic");
+
+//only used on startup, do not use
+let db;
 
 /*
  * A task should be formatted as:
@@ -56,7 +59,11 @@ class TaskApp extends React.Component {
 			tasks,
 			curTaskKey: tasks.length
 		});
-		db.init();
+		
+		dbStatic.init().then(dbRef => {
+			this.dbRef = dbRef;
+			console.log(`db added ${this.dbRef}`);
+		});
 	}
 
 	acquireTasks() {
@@ -113,6 +120,7 @@ class TaskApp extends React.Component {
 				}
 			];
 			this.calcTime(newTasks, this.state.totTime);
+			dbStatic.test(this.dbRef);
 			
 			//don't call update function (ex: setState)
 			//inside another update function
@@ -263,6 +271,13 @@ class TaskList extends React.Component {
 		</div>;
 	}
 }
+
+	/*
+dbStatic.init().then(dbRef => {
+	db = dbRef;
+	console.log(`db added ${db}`);
+});
+*/
 
 ReactDOM.render(<TaskApp />, document.getElementById("root"));
 
